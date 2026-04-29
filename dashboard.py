@@ -1,139 +1,144 @@
 import streamlit as st
+
+if "authentication_status" not in st.session_state or not st.session_state["authentication_status"]:
+    st.warning("Please login from the home page.")
+    st.stop()
+
 import pandas as pd
 import plotly.express as px
+import os
 
-st.set_page_config(page_title="Streaming Analytics SaaS", layout="wide")
+st.set_page_config(page_title="Dashboard", layout="wide")
 
 st.title("📊 Streaming Analytics PRO Dashboard")
-with st.expander("ℹ️ About / Value Proposition", expanded=True):
-    st.markdown("""
-    ### Streaming Analytics SaaS
 
-    This platform helps **Telcos, Media companies and OTT platforms** analyze streaming logs to detect quality issues, CDN inefficiencies and potential cost optimization opportunities.
+sample_path = "sample_data/sample_streaming_data.csv"
 
-    **Key value:**
-    - Detect high latency and degraded QoE
-    - Identify error spikes and possible outages
-    - Compare performance by region, device and CDN
-    - Highlight bitrate inefficiencies and cost-saving opportunities
-    - Provide instant recommendations from raw streaming logs
-
-    **Ideal users:**
-    - CTO / Head of Engineering
-    - Streaming Operations teams
-    - Telco / CDN / OTT technical teams
-    - Product and Data teams working on QoE and monetization
-    """)
+if os.path.exists(sample_path):
+    with open(sample_path, "rb") as file:
+        st.download_button(
+            label="⬇️ Download sample CSV",
+            data=file,
+            file_name="sample_streaming_data.csv",
+            mime="text/csv"
+        )
 
 uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
-sample_csv = """timestamp,region,user_id,device,latency,bitrate,status,cdn,video_id
-2026-04-29T10:00:01,FR,user_001,ios,120,3000,200,akamai,vid_001
-2026-04-29T10:00:02,FR,user_002,android,480,1800,500,cloudfront,vid_002
-2026-04-29T10:00:03,MA,user_003,web,760,1200,500,cloudflare,vid_003
-2026-04-29T10:00:04,EG,user_004,smart_tv,220,4200,200,akamai,vid_004
-2026-04-29T10:00:05,AE,user_005,android,650,900,500,cloudfront,vid_005
-"""
 
-st.download_button(
-    label="⬇️ Download sample CSV",
-    data=sample_csv,
-    file_name="sample_streaming_logs.csv",
-    mime="text/csv"
-)
+if uploaded_file is None:
+    st.info("👆 Upload a CSV file to start analysis")
+    st.stop()
 
-if uploaded_file:
+df = pd.read_csv(uploaded_file)
+df.columns = df.columns.str.strip().str.lower()
 
-    df = pd.read_csv(uploaded_file)
+st.success("CSV uploaded successfully!")
 
-    # ---------------- FILTERS ----------------
-    st.sidebar.header("Filters")
+st.subheader("Data Preview")
+st.dataframe(df, use_container_width=True)
 
-    region_filter = st.sidebar.multiselect(
-        "Region",
-        df["region"].unique(),
-        default=df["region"].unique()
+required_columns = ["views", "watch_time_minutes", "revenue"]
+
+missing_columns = [col for col in required_columns if col not in df.columns]
+
+if missing_columns:
+    st.error(f"Missing required columns: {missing_columns}")
+    st.write("Your CSV columns are:")
+    st.write(list(df.columns))
+    st.stop()
+
+# Filtres
+st.sidebar.header("Filters")
+
+filtered_df = df.copy()
+
+if "country" in df.columns:
+    countries = st.sidebar.multiselect(
+        "Select country",
+        options=sorted(df["country"].dropna().unique()),
+        default=sorted(df["country"].dropna().unique())
     )
+    filtered_df = filtered_df[filtered_df["country"].isin(countries)]
 
-    device_filter = st.sidebar.multiselect(
-        "Device",
-        df["device"].unique(),
-        default=df["device"].unique()
+if "platform" in df.columns:
+    platforms = st.sidebar.multiselect(
+        "Select device / platform",
+        options=sorted(df["platform"].dropna().unique()),
+        default=sorted(df["platform"].dropna().unique())
     )
+    filtered_df = filtered_df[filtered_df["platform"].isin(platforms)]
 
-    cdn_filter = st.sidebar.multiselect(
-        "CDN",
-        df["cdn"].unique(),
-        default=df["cdn"].unique()
+if "content_title" in df.columns:
+    contents = st.sidebar.multiselect(
+        "Select content",
+        options=sorted(df["content_title"].dropna().unique()),
+        default=sorted(df["content_title"].dropna().unique())
     )
+    filtered_df = filtered_df[filtered_df["content_title"].isin(contents)]
 
-    df_filtered = df[
-        (df["region"].isin(region_filter)) &
-        (df["device"].isin(device_filter)) &
-        (df["cdn"].isin(cdn_filter))
-    ]
+# KPIs
+total_views = filtered_df["views"].sum()
+total_watch_time = filtered_df["watch_time_minutes"].sum()
+total_revenue = filtered_df["revenue"].sum()
 
-    # ---------------- KPI ----------------
-    avg_latency = df_filtered["latency"].mean()
-    max_latency = df_filtered["latency"].max()
-    avg_bitrate = df_filtered["bitrate"].mean()
-    error_rate = (df_filtered["status"] != 200).mean()
+col1, col2, col3 = st.columns(3)
 
-    col1, col2, col3, col4 = st.columns(4)
+col1.metric("Total Views", f"{total_views:,}")
+col2.metric("Watch Time Minutes", f"{total_watch_time:,}")
+col3.metric("Revenue", f"€{total_revenue:,.2f}")
 
-    col1.metric("⚡ Avg Latency", f"{avg_latency:.2f}")
-    col2.metric("🚀 Max Latency", f"{max_latency}")
-    col3.metric("📺 Avg Bitrate", f"{avg_bitrate:.2f}")
-    col4.metric("❌ Error Rate", f"{error_rate:.2%}")
+st.divider()
 
-    st.divider()
+# Graphes
+if "platform" in filtered_df.columns:
+    st.subheader("Views by Device / Platform")
+    platform_df = filtered_df.groupby("platform", as_index=False)["views"].sum()
+    fig = px.bar(
+        platform_df,
+        x="platform",
+        y="views",
+        title="Views by Device / Platform"
+    )
+    st.plotly_chart(fig, use_container_width=True)
 
-    # ---------------- AI INSIGHTS ----------------
-    st.subheader("💡 AI Recommendations")
-
-    recommendations = []
-
-    if avg_latency > 400:
-        recommendations.append("⚠️ Critical latency issue → optimize routing / CDN")
-
-    if error_rate > 0.15:
-        recommendations.append("❌ High error rate → possible outage or server issue")
-
-    if avg_bitrate < 2000:
-        recommendations.append("📉 Low bitrate → poor QoE")
-
-    if avg_bitrate > 3800:
-        recommendations.append("💰 Bitrate too high → cost optimization possible")
-
-    if recommendations:
-        for r in recommendations:
-            st.warning(r)
-    else:
-        st.success("✅ System performance is optimal")
-
-    st.divider()
-
-    # ---------------- CHARTS ----------------
-    st.subheader("📉 Latency Over Time")
-    fig1 = px.line(df_filtered, x="timestamp", y="latency")
-    st.plotly_chart(fig1, use_container_width=True)
-
-    st.subheader("📺 Bitrate Over Time")
-    fig2 = px.line(df_filtered, x="timestamp", y="bitrate")
+if "country" in filtered_df.columns:
+    st.subheader("Revenue by Country")
+    country_df = filtered_df.groupby("country", as_index=False)["revenue"].sum()
+    fig2 = px.pie(
+        country_df,
+        names="country",
+        values="revenue",
+        title="Revenue by Country"
+    )
     st.plotly_chart(fig2, use_container_width=True)
 
-    st.subheader("⚠️ Error Distribution")
-    fig3 = px.histogram(df_filtered, x="status")
+if "content_title" in filtered_df.columns:
+    st.subheader("Top Content by Views")
+    top_content = (
+        filtered_df.groupby("content_title", as_index=False)["views"]
+        .sum()
+        .sort_values(by="views", ascending=False)
+    )
+
+    fig3 = px.bar(
+        top_content,
+        x="content_title",
+        y="views",
+        title="Top Content by Views"
+    )
     st.plotly_chart(fig3, use_container_width=True)
 
-    st.subheader("🌍 Latency by Region")
-    fig4 = px.box(df_filtered, x="region", y="latency")
+    st.dataframe(top_content, use_container_width=True)
+
+if "date" in filtered_df.columns:
+    st.subheader("Views Evolution Over Time")
+    filtered_df["date"] = pd.to_datetime(filtered_df["date"], errors="coerce")
+    time_df = filtered_df.groupby("date", as_index=False)["views"].sum()
+
+    fig4 = px.line(
+        time_df,
+        x="date",
+        y="views",
+        title="Views Over Time"
+    )
     st.plotly_chart(fig4, use_container_width=True)
-
-    st.divider()
-
-    # ---------------- DATA ----------------
-    st.subheader("📁 Filtered Data")
-    st.dataframe(df_filtered.head(1000))
-
-else:
-    st.info("👆 Upload a CSV file to start analysis")
