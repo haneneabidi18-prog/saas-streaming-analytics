@@ -9,6 +9,8 @@ st.set_page_config(
     layout="wide"
 )
 
+st.caption("VERSION LOGIN ACTIVE - 29/04/2026")
+
 with open("config.yaml") as file:
     config = yaml.load(file, Loader=SafeLoader)
 
