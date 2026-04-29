@@ -5,8 +5,41 @@ import plotly.express as px
 st.set_page_config(page_title="Streaming Analytics SaaS", layout="wide")
 
 st.title("📊 Streaming Analytics PRO Dashboard")
+with st.expander("ℹ️ About / Value Proposition", expanded=True):
+    st.markdown("""
+    ### Streaming Analytics SaaS
+
+    This platform helps **Telcos, Media companies and OTT platforms** analyze streaming logs to detect quality issues, CDN inefficiencies and potential cost optimization opportunities.
+
+    **Key value:**
+    - Detect high latency and degraded QoE
+    - Identify error spikes and possible outages
+    - Compare performance by region, device and CDN
+    - Highlight bitrate inefficiencies and cost-saving opportunities
+    - Provide instant recommendations from raw streaming logs
+
+    **Ideal users:**
+    - CTO / Head of Engineering
+    - Streaming Operations teams
+    - Telco / CDN / OTT technical teams
+    - Product and Data teams working on QoE and monetization
+    """)
 
 uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
+sample_csv = """timestamp,region,user_id,device,latency,bitrate,status,cdn,video_id
+2026-04-29T10:00:01,FR,user_001,ios,120,3000,200,akamai,vid_001
+2026-04-29T10:00:02,FR,user_002,android,480,1800,500,cloudfront,vid_002
+2026-04-29T10:00:03,MA,user_003,web,760,1200,500,cloudflare,vid_003
+2026-04-29T10:00:04,EG,user_004,smart_tv,220,4200,200,akamai,vid_004
+2026-04-29T10:00:05,AE,user_005,android,650,900,500,cloudfront,vid_005
+"""
+
+st.download_button(
+    label="⬇️ Download sample CSV",
+    data=sample_csv,
+    file_name="sample_streaming_logs.csv",
+    mime="text/csv"
+)
 
 if uploaded_file:
 
