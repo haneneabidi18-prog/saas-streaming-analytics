@@ -1,4 +1,10 @@
 import streamlit as st
+
+if "authentication_status" not in st.session_state or not st.session_state["authentication_status"]:
+    st.warning("Please login from the home page.")
+    st.stop()
+    
+import streamlit as st
 import pandas as pd
 import plotly.express as px
 import os

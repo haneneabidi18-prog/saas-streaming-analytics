@@ -1,5 +1,11 @@
 import streamlit as st
 
+if "authentication_status" not in st.session_state or not st.session_state["authentication_status"]:
+    st.warning("Please login from the home page.")
+    st.stop()
+    
+import streamlit as st
+
 st.set_page_config(page_title="Pricing", layout="wide")
 
 st.title("💎 Pricing")

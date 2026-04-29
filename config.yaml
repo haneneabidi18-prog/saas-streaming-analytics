@@ -1,0 +1,15 @@
+credentials:
+  usernames:
+    hanene:
+      email: hanene@example.com
+      name: Hanene
+      password: abc123
+
+cookie:
+  expiry_days: 30
+  key: streaming_saas_signature_key
+  name: streaming_saas_cookie
+
+preauthorized:
+  emails:
+    - hanene@example.com
