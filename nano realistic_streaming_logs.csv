@@ -1,0 +1,11 @@
+timestamp,region,user_id,device,latency,bitrate,status,cdn,video_id
+2026-04-29T10:00:01Z,FR,user_001,ios,120,3000,200,akamai,vid_001
+2026-04-29T10:00:02Z,FR,user_002,android,350,2500,200,cloudfront,vid_002
+2026-04-29T10:00:03Z,FR,user_003,web,500,2000,500,akamai,vid_003
+2026-04-29T10:00:04Z,FR,user_004,smart_tv,220,3500,200,cloudflare,vid_001
+2026-04-29T10:00:05Z,FR,user_005,ios,180,4000,200,akamai,vid_004
+2026-04-29T10:00:06Z,FR,user_006,android,600,1500,500,cloudfront,vid_002
+2026-04-29T10:00:07Z,FR,user_007,web,90,4500,200,cloudflare,vid_005
+2026-04-29T10:00:08Z,FR,user_008,smart_tv,300,2800,200,akamai,vid_006
+2026-04-29T10:00:09Z,FR,user_009,ios,700,1200,500,cloudfront,vid_003
+2026-04-29T10:00:10Z,FR,user_010,android,200,3200,200,akamai,vid_007
