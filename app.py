@@ -35,7 +35,7 @@ if authentication_status:
 
     # User plan management
     if "plan" not in st.session_state:
-        st.session_state["plan"] = "free"
+        st.session_state["plan"] = "pro"
 
     st.sidebar.success(f"Logged in as {name}")
     st.sidebar.info(f"Current plan: {st.session_state['plan'].upper()}")
