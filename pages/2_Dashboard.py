@@ -104,37 +104,90 @@ def generate_pdf(total_views, total_watch_time, total_revenue, insights):
     return file_path
 
 
-def generate_insights(filtered_df, total_views, total_revenue):
+def generate_insights(filtered_df, total_views, total_revenue, total_watch_time):
     insights = []
 
     if filtered_df.empty:
         return ["No data available for the selected filters."]
 
+    # Revenue by country
     if "country" in filtered_df.columns and total_revenue > 0:
         country_revenue = filtered_df.groupby("country")["revenue"].sum()
         top_country = country_revenue.idxmax()
-        revenue_share = (country_revenue.max() / total_revenue) * 100
-        insights.append(f"{top_country} generates {revenue_share:.1f}% of total revenue.")
+        top_country_revenue = country_revenue.max()
+        revenue_share = (top_country_revenue / total_revenue) * 100
 
+        insights.append(
+            f"{top_country} generates {revenue_share:.1f}% of total revenue."
+        )
+
+        if revenue_share > 50:
+            insights.append(
+                f"Recommendation: Focus growth and marketing efforts on {top_country}."
+            )
+
+    # Views by platform/device
     if "platform" in filtered_df.columns and total_views > 0:
         platform_views = filtered_df.groupby("platform")["views"].sum()
         top_platform = platform_views.idxmax()
-        platform_share = (platform_views.max() / total_views) * 100
+        top_platform_views = platform_views.max()
+        platform_share = (top_platform_views / total_views) * 100
+
         insights.append(
             f"{top_platform} is the leading device/platform with {platform_share:.1f}% of total views."
         )
 
+        if platform_share > 50:
+            insights.append(
+                f"Recommendation: Prioritize user experience optimization on {top_platform}."
+            )
+
+    # Top content
     if "content_title" in filtered_df.columns and total_views > 0:
         content_views = filtered_df.groupby("content_title")["views"].sum()
         top_content = content_views.idxmax()
-        content_share = (content_views.max() / total_views) * 100
+        top_content_views = content_views.max()
+        content_share = (top_content_views / total_views) * 100
+
         insights.append(
             f"{top_content} is the top-performing content with {content_share:.1f}% of total views."
         )
 
+        if content_share > 40:
+            insights.append(
+                f"Recommendation: Promote {top_content} to maximize engagement."
+            )
+
+    # Revenue per view
     if total_views > 0:
         revenue_per_view = total_revenue / total_views
-        insights.append(f"Average revenue per view is €{revenue_per_view:.2f}.")
+        insights.append(
+            f"Average revenue per view is EUR {revenue_per_view:.2f}."
+        )
+
+    # Average watch time per view
+    if total_views > 0 and total_watch_time > 0:
+        avg_watch_time = total_watch_time / total_views
+        insights.append(
+            f"Average watch time per view is {avg_watch_time:.1f} minutes."
+        )
+
+        if avg_watch_time < 10:
+            insights.append(
+                "Alert: Average watch time is low. Review content engagement and playback experience."
+            )
+
+    # Revenue alert
+    if total_revenue < 200:
+        insights.append(
+            "Alert: Revenue is below target. Consider optimizing monetization strategy."
+        )
+
+    # Engagement alert
+    if total_views < 500:
+        insights.append(
+            "Alert: Engagement is low. Consider promoting stronger content or improving acquisition."
+        )
 
     return insights
 
@@ -215,7 +268,7 @@ col2.metric("Watch Time Minutes", f"{total_watch_time:,}")
 col3.metric("Revenue", f"€{total_revenue:,.2f}")
 
 st.subheader("🧠 Executive Insights")
-insights = generate_insights(filtered_df, total_views, total_revenue)
+insights = generate_insights(filtered_df, total_views, total_revenue, total_watch_time)
 
 for insight in insights:
     st.info(insight)
