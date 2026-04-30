@@ -1,50 +1,91 @@
 import streamlit as st
 
 if "authentication_status" not in st.session_state or not st.session_state["authentication_status"]:
-    st.warning("Please login from the home page.")
+    st.warning("Please login.")
     st.stop()
-    
-import streamlit as st
 
 st.set_page_config(page_title="Pricing", layout="wide")
 
-st.title("💎 Pricing")
+st.title("💎 Pricing Plans")
+
+st.markdown("""
+### Choose the plan that fits your business needs
+""")
+
+current_plan = st.session_state.get("plan", "free")
 
 col1, col2, col3 = st.columns(3)
 
+# FREE PLAN
 with col1:
     st.subheader("Free")
     st.markdown("""
     **€0 / month**
 
-    - Upload CSV
-    - Basic dashboard
-    - Limited analysis
-    - No history
+    ✔ Upload CSV  
+    ✔ Basic dashboard  
+    ✔ Standard KPIs  
+
+    ❌ Save history  
+    ❌ Export PDF  
+    ❌ Advanced insights  
     """)
 
+    if current_plan == "free":
+        st.success("Current Plan")
+    else:
+        if st.button("Downgrade to Free"):
+            st.session_state["plan"] = "free"
+            st.success("Switched to Free")
+
+# PRO PLAN
 with col2:
-    st.subheader("Pro")
+    st.subheader("Pro 🚀")
     st.markdown("""
     **€29 / month**
 
-    - User account
-    - Saved history
-    - Advanced dashboard
-    - Export reports
-    - Priority support
-    """)
-    st.button("Choose Pro")
+    ✔ Everything in Free  
+    ✔ Save analysis history  
+    ✔ Export executive PDF reports  
+    ✔ Advanced insights  
+    ✔ Business-ready analytics  
 
+    👉 Perfect for OTT teams & analysts
+    """)
+
+    if current_plan == "pro":
+        st.success("Current Plan")
+    else:
+        if st.button("Upgrade to Pro"):
+            st.session_state["plan"] = "pro"
+            st.success("You are now Pro!")
+
+# ENTERPRISE
 with col3:
-    st.subheader("Business")
+    st.subheader("Enterprise 🏢")
     st.markdown("""
-    **€199 / month**
+    **Custom pricing**
 
-    - Multi-user workspace
-    - Live API
-    - Custom dashboards
-    - Telecom / OTT analytics
-    - Premium support
+    ✔ Multi-user access  
+    ✔ API integration  
+    ✔ Live data pipelines  
+    ✔ Custom dashboards  
+    ✔ Dedicated support  
+
+    👉 For telcos & media groups
     """)
+
     st.button("Contact Sales")
+
+st.divider()
+
+st.markdown("""
+### Why upgrade?
+
+- Turn data into actionable insights  
+- Generate executive-ready reports  
+- Track performance over time  
+- Make data-driven business decisions  
+
+🚀 Upgrade to Pro to unlock the full power of the platform.
+""")
