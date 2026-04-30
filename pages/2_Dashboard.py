@@ -94,7 +94,9 @@ col3.metric("Revenue", f"€{total_revenue:,.2f}")
 # Save Analysis - PRO feature
 st.subheader("💾 Save Analysis")
 
-if st.session_state.get("plan") == "free":
+current_plan = st.session_state.get("plan", "free")
+
+if current_plan == "pro":
 
     if st.button("Save Analysis"):
         os.makedirs("storage", exist_ok=True)
@@ -125,8 +127,6 @@ if st.session_state.get("plan") == "free":
 
 else:
     st.warning("🔒 Save Analysis is a Pro feature. Upgrade to Pro to save your reports.")
-
-st.divider()
 
 # Charts
 if "platform" in filtered_df.columns:
