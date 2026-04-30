@@ -1,6 +1,16 @@
-date,platform,country,content_title,views,watch_time_minutes,revenue
-2026-01-01,Mobile,France,Series A,1200,54000,320
-2026-01-02,Web,France,Series B,900,36000,250
-2026-01-03,Smart TV,France,Movie C,1500,75000,480
-2026-01-04,Mobile,Tunisia,Series A,700,28000,140
-2026-01-05,Web,Morocco,Documentary D,600,21000,110
+timestamp,session_id,user_id,country,platform,content_title,views,watch_time_minutes,revenue,buffering_ratio,startup_time_ms,bitrate_kbps,error_code
+2026-01-01 10:01,s1,u1,France,Mobile,Series A,1,45,0.5,0.02,1200,3000,
+2026-01-01 10:05,s2,u2,France,Web,Series B,1,12,0.2,0.15,3500,1200,BUFFERING_ERROR
+2026-01-01 10:07,s3,u3,Morocco,Mobile,Series A,1,5,0.1,0.30,6000,800,STARTUP_TIMEOUT
+2026-01-01 10:10,s4,u4,Senegal,Smart TV,Movie C,1,60,1.2,0.01,800,4500,
+2026-01-01 10:12,s5,u5,France,Mobile,Series A,1,3,0.05,0.40,9000,500,LOW_BITRATE
+2026-01-01 10:15,s6,u6,Tunisia,Web,Series B,1,25,0.3,0.10,2500,2000,
+2026-01-01 10:18,s7,u7,Morocco,Mobile,Movie C,1,8,0.1,0.25,7000,600,BUFFERING_ERROR
+2026-01-01 10:20,s8,u8,France,Smart TV,Series A,1,50,1.0,0.02,1000,5000,
+2026-01-01 10:25,s9,u9,Senegal,Mobile,Series B,1,6,0.1,0.35,8000,700,LOW_BITRATE
+2026-01-01 10:30,s10,u10,France,Web,Movie C,1,40,0.8,0.05,1200,3500,
+2026-01-01 10:35,s11,u11,Morocco,Mobile,Series A,1,2,0.02,0.50,11000,400,STARTUP_TIMEOUT
+2026-01-01 10:40,s12,u12,France,Mobile,Series B,1,15,0.25,0.12,3000,1500,
+2026-01-01 10:45,s13,u13,Tunisia,Smart TV,Movie C,1,55,1.1,0.01,700,4800,
+2026-01-01 10:50,s14,u14,Senegal,Mobile,Series A,1,4,0.08,0.45,9500,500,LOW_BITRATE
+2026-01-01 10:55,s15,u15,France,Web,Series B,1,20,0.35,0.08,2000,2200,
