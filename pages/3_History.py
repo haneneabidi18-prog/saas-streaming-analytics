@@ -1,23 +1,20 @@
 import streamlit as st
+import json
+import os
 
 if "authentication_status" not in st.session_state or not st.session_state["authentication_status"]:
-    st.warning("Please login from the home page.")
+    st.warning("Please login.")
     st.stop()
-    
-import streamlit as st
 
-st.set_page_config(page_title="History", layout="wide")
+st.title("📁 My Analysis History")
 
-st.title("📁 Analysis History")
+user = st.session_state.get("username")
+file_path = f"storage/history_{user}.json"
 
-st.info("History will be available in the premium version.")
+if os.path.exists(file_path):
+    with open(file_path, "r") as f:
+        data = json.load(f)
 
-st.markdown("""
-Soon, users will be able to:
-
-- Save uploaded files
-- Save dashboard results
-- Reopen previous analyses
-- Export previous reports
-- Compare historical performance
-""")
+    st.dataframe(data)
+else:
+    st.info("No history yet.")

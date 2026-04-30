@@ -89,6 +89,28 @@ col3.metric("Revenue", f"€{total_revenue:,.2f}")
 
 st.divider()
 
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph
+
+def generate_pdf():
+    file_path = "report.pdf"
+    doc = SimpleDocTemplate(file_path, pagesize=letter)
+
+    elements = []
+
+    elements.append(Paragraph(f"Total Views: {total_views}", None))
+    elements.append(Paragraph(f"Watch Time: {total_watch_time}", None))
+    elements.append(Paragraph(f"Revenue: {total_revenue}", None))
+
+    doc.build(elements)
+    return file_path
+
+if st.button("📄 Export PDF"):
+    pdf_file = generate_pdf()
+
+    with open(pdf_file, "rb") as f:
+        st.download_button("Download Report", f, file_name="report.pdf")
+        
 # Graphes
 if "platform" in filtered_df.columns:
     st.subheader("Views by Device / Platform")
