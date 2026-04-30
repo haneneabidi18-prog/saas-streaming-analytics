@@ -53,7 +53,7 @@ with col2:
     else:
         if st.button("Upgrade to Pro"):
             st.session_state["checkout_plan"] = "pro"
-            st.switch_page("pages/5_Checkout.py")
+            st.switch_page("views/5_Checkout.py")
 
 with col3:
     st.subheader("Enterprise 🏢")
