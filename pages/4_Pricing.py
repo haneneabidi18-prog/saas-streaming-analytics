@@ -7,16 +7,12 @@ if "authentication_status" not in st.session_state or not st.session_state["auth
 st.set_page_config(page_title="Pricing", layout="wide")
 
 st.title("💎 Pricing Plans")
-
-st.markdown("""
-### Choose the plan that fits your business needs
-""")
+st.markdown("### Choose the plan that fits your business needs")
 
 current_plan = st.session_state.get("plan", "free")
 
 col1, col2, col3 = st.columns(3)
 
-# FREE PLAN
 with col1:
     st.subheader("Free")
     st.markdown("""
@@ -38,7 +34,6 @@ with col1:
             st.session_state["plan"] = "free"
             st.success("Switched to Free")
 
-# PRO PLAN
 with col2:
     st.subheader("Pro 🚀")
     st.markdown("""
@@ -57,10 +52,9 @@ with col2:
         st.success("Current Plan")
     else:
         if st.button("Upgrade to Pro"):
-            st.session_state["plan"] = "pro"
-            st.success("You are now Pro!")
+            st.session_state["checkout_plan"] = "pro"
+            st.switch_page("pages/5_Checkout.py")
 
-# ENTERPRISE
 with col3:
     st.subheader("Enterprise 🏢")
     st.markdown("""
@@ -75,7 +69,8 @@ with col3:
     👉 For telcos & media groups
     """)
 
-    st.button("Contact Sales")
+    if st.button("Contact Sales"):
+        st.info("A sales contact form will be added later.")
 
 st.divider()
 
