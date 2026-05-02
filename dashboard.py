@@ -36,6 +36,41 @@ st.success("CSV uploaded successfully!")
 
 st.subheader("Data Preview")
 st.dataframe(df, use_container_width=True)
+st.markdown("---")
+st.subheader("🧠 AI Streaming Intelligence")
+
+insights = generate_ai_insights(df)
+recommendations = generate_recommendations(df)
+health = compute_health_score(df)
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.metric("📊 Streaming Health Score", f"{health}/100")
+
+with col2:
+    st.metric("🎥 QoE Score", round(compute_qoe(df), 2))
+
+st.subheader("🧠 AI Insights")
+
+if insights:
+    for insight in insights:
+        st.warning(insight)
+else:
+    st.success("✅ No major issue detected")
+
+st.subheader("🚀 Recommended Actions")
+
+if recommendations:
+    for rec in recommendations:
+        st.info(rec)
+else:
+    st.success("✅ No urgent action required")
+
+df["churn_risk"] = df.apply(churn_risk, axis=1)
+
+st.subheader("👥 Churn Risk Distribution")
+st.bar_chart(df["churn_risk"].value_counts())
 
 required_columns = ["views", "watch_time_minutes", "revenue"]
 
